@@ -371,7 +371,10 @@ class _detailesState extends State<detailes> {
                                             sfull,
                                             n,
                                             side,
-                                            up_ch;
+                                            up_ch,
+                                            arm_holder;
+                                        arm_holder =
+                                            TextEditingController(text: k.arms);
                                         up_ch = TextEditingController(
                                             text: k.upper_chest);
                                         tuck =
@@ -535,6 +538,25 @@ class _detailesState extends State<detailes> {
                                                                 ),
                                                                 labelText:
                                                                     "ENTER SEAT "),
+                                                        keyboardType:
+                                                            TextInputType
+                                                                .number,
+                                                      ),
+                                                      SizedBox(
+                                                        height: 20.0,
+                                                      ),
+                                                      TextFormField(
+                                                        controller: arm_holder,
+                                                        decoration:
+                                                            InputDecoration(
+                                                                border:
+                                                                    new OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      new BorderRadius
+                                                                          .circular(25),
+                                                                ),
+                                                                labelText:
+                                                                    "ENTER ARM HOLDER "),
                                                         keyboardType:
                                                             TextInputType
                                                                 .number,
@@ -708,9 +730,13 @@ class _detailesState extends State<detailes> {
                                                               tuck: tuck.text,
                                                               waistLen: wl.text,
                                                               length: l.text,
+                                                              upper_chest:
+                                                                  up_ch.text,
                                                               chest: c.text,
                                                               waist: w.text,
                                                               seat: s.text,
+                                                              arms: arm_holder
+                                                                  .text,
                                                               shoulder: sh.text,
                                                               sleee_half:
                                                                   shalf.text,
@@ -725,28 +751,10 @@ class _detailesState extends State<detailes> {
                                                       dbref
                                                           .child("/" +
                                                               "${widget.name}/1")
-                                                          .update({
-                                                        'name': widget.name,
-                                                        'tuck': tuck.text,
-                                                        'waistLen': wl.text,
-                                                        'length': l.text,
-                                                        'upper_chest':
-                                                            up_ch.text,
-                                                        'chest': c.text,
-                                                        'waist': w.text,
-                                                        'seat': s.text,
-                                                        'shoulder': sh.text,
-                                                        'sleee_half':
-                                                            shalf.text,
-                                                        'sleev_34': s34.text,
-                                                        'sleev_full':
-                                                            sfull.text,
-                                                        'neck': n.text,
-                                                        'sideslit': side.text
-                                                      });
+                                                          .update(kdup.toMap());
 
-                                                      setState(() {});
-                                                      Navigator.pop(context);
+                                                      Navigator.of(context)
+                                                          .pop();
                                                     },
                                                     child: Text(
                                                       "UPDATE",
@@ -1145,10 +1153,79 @@ class _detailesState extends State<detailes> {
                     borderRadius: BorderRadius.circular(20.0),
                     child: GestureDetector(
                       onTap: () {
-                        print(c.toMap());
-                        dbref
-                            .child("/" + "${widget.name}")
-                            .set({c.toMap(), k.toMap(), p.toMap()}.toList());
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            // return object of type Dialog
+                            return AlertDialog(
+                              title: new Text(
+                                "DATABASE ALERT",
+                                style: TextStyle(color: Colors.yellow),
+                              ),
+                              content: new Text(
+                                "ARE YOU SURE WANT TO ADD TO CLOUD ",
+                                style: TextStyle(
+                                    fontSize: 30.0,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              actions: <Widget>[
+                                // usually buttons at the bottom of the dialog
+
+                                Row(
+                                  children: [
+                                    Material(
+                                        elevation: 10.0,
+                                        color: Colors.blue,
+                                        shadowColor: Colors.blueAccent,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            // dbref
+                                            //     .child("/" + "${widget.name}")
+                                            //     .set({
+                                            //       c.toMap(),
+                                            //       k.toMap(),
+                                            //       p.toMap()
+                                            //     }.toList());
+                                            setState(() {
+                                              dbref
+                                                  .child("/" + "${widget.name}")
+                                                  .set({
+                                                    c.toMap(),
+                                                    k.toMap(),
+                                                    p.toMap()
+                                                  }.toList());
+                                            });
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text(
+                                            "YES",
+                                            style: TextStyle(fontSize: 30.0),
+                                          ),
+                                        )),
+                                    SizedBox(
+                                      width: 20.0,
+                                    ),
+                                    Material(
+                                        elevation: 10.0,
+                                        color: Colors.blue,
+                                        shadowColor: Colors.blueAccent,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text(
+                                            "NO",
+                                            style: TextStyle(fontSize: 30.0),
+                                          ),
+                                        )),
+                                  ],
+                                )
+                              ],
+                            );
+                          },
+                        );
+                        // print(c.toMap());
+
                         // dbref
                         //     .child("/" + widget.name)
                         //     .set({c.toMap(), k.toMap(), p.toMap()});
@@ -1194,27 +1271,57 @@ class _detailesState extends State<detailes> {
                                   style: TextStyle(fontSize: 40.0),
                                 ),
                                 actions: [
-                                  Material(
-                                    elevation: 10.0,
-                                    color: Colors.blue,
-                                    shadowColor: Colors.blueAccent,
-                                    child: GestureDetector(
-                                      onTap: () {},
-                                      child: Text("YES"),
-                                    ),
+                                  Row(
+                                    children: [
+                                      Material(
+                                        elevation: 10.0,
+                                        color: Colors.blue,
+                                        shadowColor: Colors.blueAccent,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            dbhelper.deletec(widget.name);
+                                            dbhelper.deletep(widget.name);
+                                            dbhelper.deletek(widget.name);
+                                            dbref
+                                                .child("/" + "${widget.name}")
+                                                .remove()
+                                                .then((value) {
+                                              Navigator.pushAndRemoveUntil(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          final_search()),
+                                                  (route) => false);
+                                            });
+                                          },
+                                          child: Text(
+                                            "YES",
+                                            style: TextStyle(fontSize: 30.0),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 20.0,
+                                      ),
+                                      Material(
+                                        elevation: 10.0,
+                                        color: Colors.blue,
+                                        shadowColor: Colors.blueAccent,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text(
+                                            "NO",
+                                            style: TextStyle(fontSize: 30.0),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   )
                                 ],
                               );
                             });
-                        // dbhelper.deletec(widget.name);
-                        // dbhelper.deletep(widget.name);
-                        // dbhelper.deletek(widget.name);
-                        // dbref.child("/" + "${widget.name}").remove();
-                        // Navigator.pushAndRemoveUntil(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (context) => final_search()),
-                        //     (route) => false);
                       },
                       child: Icon(
                         Icons.delete_forever,
